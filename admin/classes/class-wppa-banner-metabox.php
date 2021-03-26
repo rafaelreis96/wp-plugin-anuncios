@@ -1,63 +1,42 @@
 <?php
 
+require wppa_get_plugin_path() . 'includes/classes/class-banner-model.php';
+
 class WPPA_Banner_Metabox {
     const ID = 'wppa_banner_box_id'; 
     const TITLE = 'Informaçoes do Banner';
-    const POSTS_TYPES = ['wppa_banners'];
+    const POSTS_TYPE = 'wppa_banners';
     
-    protected $data = [
-        'url',
-        'acao', 
-        'status', 
-        'altura',
-        'largura', 
-        'responsivo',
-        'imagem', 
-        'posicao',
-        'data_publicacao',
-        'hora_publicacao',
-        'data_expiracao',
-        'hora_expiracao'
-    ];
+    protected $model;
 
     public function __construct() {
+        $this->model = new WPPA_Banner_Model();
+        
         add_action('add_meta_boxes', array($this, 'register'));
         add_action('save_post', array($this, 'save_post_data'));
-        add_action('admin_enqueue_scripts', array($this, 'load_styles'));
-        add_action('admin_enqueue_scripts', array($this, 'load_scripts'));
+        add_action('admin_enqueue_scripts', array($this, 'styles'));
+        add_action('admin_enqueue_scripts', array($this, 'scripts'));
     }
  
-    public function load_styles() {
+    public function styles() {
         wp_enqueue_style('wppa-metabox', wppa_get_plugin_url() . 'admin/css/wppa-banner-metabox.css' );
     }
     
-    public function load_scripts() {
+    public function scripts() {
         wp_enqueue_script('wppa-metabox', wppa_get_plugin_url() . 'admin/js/wppa-banner-metabox.js', array ( 'jquery' ), '', true);
     }
     
     public function register() {
-        foreach (self::POSTS_TYPES as $postType ) {
-            add_meta_box( self::ID, self::TITLE, array($this,'view'), $postType );
-        }
+        add_meta_box( self::ID, self::TITLE, array($this,'template'), self::POSTS_TYPE );
     }
     
     public function save_post_data(int $post_id) {        
-        $request = $_POST;
-        
-        if (array_key_exists('url', $request)) {
-            foreach ($this->data as $key) {
-                update_post_meta($post_id, $key, sanitize_text_field($request[$key]));
-            }
-        }
+        $this->model->save_data($post_id, $_POST);
     }
  
-    public function view() {
-        $values = [];
-        
-        foreach ($this->data as $key) {
-           $values[$key] = get_post_meta(get_the_ID(), $key, true);
-        }
-         
+    public function template() {
+        $values = $this->model->get_data(get_the_ID());
+
         extract($values);
         
         $status =  [
@@ -75,9 +54,9 @@ class WPPA_Banner_Metabox {
 
         $posicoes = [
             ['label' => 'Manual', 'icon' => 'ads-manual', 'value' => 'manual'],
-            ['label' => 'Cabeçalho', 'icon' => 'ads-top', 'value' => 'header'],
+            ['label' => 'Cabeçalho', 'icon' => 'ads-top', 'value' => 'top'],
             ['label' => 'Centro', 'icon' => 'ads-center', 'value' => 'center'],
-            ['label' => 'Rodapé', 'icon' => 'ads-bottom', 'value' => 'footer'],
+            ['label' => 'Rodapé', 'icon' => 'ads-bottom', 'value' => 'bottom'],
         ];
         
         require_once wppa_get_plugin_path() . 'admin/views/metaboxes/new-banner.php';
