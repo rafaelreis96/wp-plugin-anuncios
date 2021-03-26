@@ -12,14 +12,17 @@ if(!defined( 'ABSPATH' )) exit;
  * Text Domain: wppa
 */
 
-function wppa_get_plugin_path() {
-    return plugin_dir_path(__FILE__);
+if(!function_exists('wppa_get_plugin_path')) {
+    function wppa_get_plugin_path() {
+        return plugin_dir_path(__FILE__);
+    }
 }
 
-function wppa_get_plugin_url() {
-    return plugin_dir_url(__FILE__);
+if(!function_exists('wppa_get_plugin_path')) {
+    function wppa_get_plugin_url() {
+        return plugin_dir_url(__FILE__);
+    }
 }
-
 
 if(is_admin()) {
     require wppa_get_plugin_path() . 'admin/wp-plugin-anuncios-admin.php';
