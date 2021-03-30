@@ -21,7 +21,7 @@ class Admin {
             'manage_options',
             'wppa_anuncios', 
             array($this, 'home_page'),
-            'dashicons-align-left',
+            wppa_get_plugin_url() . 'admin/images/adsense.svg',
             40 // posição
         );
         
