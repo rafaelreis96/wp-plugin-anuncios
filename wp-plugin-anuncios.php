@@ -18,24 +18,21 @@ if(!function_exists('wppa_get_plugin_path')) {
     }
 }
 
-if(!function_exists('wppa_get_plugin_path')) {
+if(!function_exists('wppa_get_plugin_url')) {
     function wppa_get_plugin_url() {
         return plugin_dir_url(__FILE__);
     }
 }
+ 
+
 
 if(is_admin()) {
     require wppa_get_plugin_path() . 'admin/wp-plugin-anuncios-admin.php';
-} else {
-    require wppa_get_plugin_path() . 'public/wp-plugin-anuncios-public.php';
-}
+} 
 
- 
+require wppa_get_plugin_path() . 'public/wp-plugin-anuncios-public.php';
+require wppa_get_plugin_path() . 'public/widgets/class-wppa-widget-banner.php';
 
-/**
- * Install
- */
-//require WPPG_PLUGIN_PATH . 'install.php';
-//register_activation_hook( __FILE__, array(new Install(), 'activate') );
+
 
  
