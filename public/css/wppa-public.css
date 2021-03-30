@@ -2,3 +2,8 @@
     max-width: 100% !important;
     height: auto;
 }
+
+.wppa-widget-banner-img {
+    width: 100%;
+    height: auto;
+}

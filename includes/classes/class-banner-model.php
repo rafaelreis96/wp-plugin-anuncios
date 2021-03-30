@@ -31,6 +31,80 @@ class WPPA_Banner_Model {
         return $data;
     }
 
+    public function get_id_post_active($custom_query = null) {
+        $data = current_time('Y-m-d');
+        
+        $meta_query = [
+            [
+                'key'=>'status', 
+                'value'=>'a', 
+                'compare'=>'='
+            ],
+            [
+                'key'=>'data_inicio', 
+                'value'=> $data, 
+                'compare'=>'<=', 
+                'type' => 'DATE'
+            ],
+            [
+                'key'=>'data_expiracao', 
+                'value'=> $data, 
+                'compare'=>'>=', 
+                'type' => 'DATE'
+            ]
+        ];
+        
+        if($custom_query) {
+            $meta_query[] = $custom_query;
+        }
+        
+        $query = new WP_Query([
+            'post_type' => 'wppa_banners',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_query' => $meta_query
+        ]);
+        
+        if($query->have_posts()) {
+            return $query->posts[0];
+        }
+        
+        return null;
+    }
+    
+    public function get_list_actives() {
+        $data = current_time('Y-m-d');
+        
+        $meta_query = [
+            [
+                'key'=>'status', 
+                'value'=>'a', 
+                'compare'=>'='
+            ],
+            [
+                'key'=>'data_inicio', 
+                'value'=> $data, 
+                'compare'=>'<=', 
+                'type' => 'DATE'
+            ],
+            [
+                'key'=>'data_expiracao', 
+                'value'=> $data, 
+                'compare'=>'>=', 
+                'type' => 'DATE'
+            ]
+        ];
+        
+         
+        $query = new WP_Query([
+            'post_type' => 'wppa_banners',
+            'posts_per_page' => -1,
+            'meta_query' => $meta_query
+        ]);
+        
+         
+        return $query->posts;
+     }
     
     public function __call($name, $values) {
         $index = strpos($name, '_');
